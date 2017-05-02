@@ -150,14 +150,16 @@
     const field = document.getElementById('field');
     const gameField = document.createElement('div');
     let i = 0;
-    let newRow = document.createElement('div');;
-    let newCell = document.createElement('div');;
+    let newRow;
+    let newCell;
     let rowLength;
     let j;
     for (i; i < this.iSize; i++) {
+      newRow = document.createElement('div');
       j = i * this.iSize;
       rowLength = j + this.iSize;
       for (j; j < rowLength; j++) {
+        newCell = document.createElement('div');
         newCell.innerHTML = aCombination[j];
         newRow.appendChild(newCell);
       }

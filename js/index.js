@@ -36,34 +36,34 @@ const MVP = (function () {
           ...    ...  ... ...
           n*x+1 n*x+2 ... n*x
         */
-      const ms = this.getCurrentGameModel().length;
-      const rs = Math.sqrt(ms);
-      const np = this.iNullPos + 1;
-      const a = np / rs;
-      const b = (np - 1) / rs;
-      const c = np / rs ^ 0;
-      const d = np - c * rs;
-      if (!!(np % rs) && b !== (b ^ 0) && c !== 0 && c !== rs - 1) {
-        return [c * rs + d - 1, c * rs + d + 1, (c - 1) * rs + d, (c + 1) * rs + d];
+      const modelSize = this.getCurrentGameModel().length;
+      const squareSize = Math.sqrt(modelSize);
+      const nullPos = this.iNullPos + 1;
+      const rowNullPos = nullPos / squareSize;
+      const indexOfRowNullPos = (nullPos - 1) / squareSize;
+      const intRowNullPos = rowNullPos ^ 0;
+      const posOffset = nullPos - intRowNullPos * squareSize;
+      if (!!(nullPos % squareSize) && indexOfRowNullPos !== (indexOfRowNullPos ^ 0) && intRowNullPos !== 0 && intRowNullPos !== squareSize - 1) {
+        return [intRowNullPos * squareSize + posOffset - 1, intRowNullPos * squareSize + posOffset + 1, (intRowNullPos - 1) * squareSize + posOffset, (intRowNullPos + 1) * squareSize + posOffset];
       }
-      if (!(np % rs)) {
-        if (a !== 1 && a !== rs) {
-          return [(a - 1) * rs, (a + 1) * rs, a * rs - 1];
-        } else if (a === 1) {
-          return [(a + 1) * rs, a * rs - 1];
+      if (!(nullPos % squareSize)) {
+        if (rowNullPos !== 1 && rowNullPos !== squareSize) {
+          return [(rowNullPos - 1) * squareSize, (rowNullPos + 1) * squareSize, rowNullPos * squareSize - 1];
+        } else if (rowNullPos === 1) {
+          return [(rowNullPos + 1) * squareSize, rowNullPos * squareSize - 1];
         }
-        return [(a - 1) * rs, a * rs - 1];
-      } else if (b === (b ^ 0)) {
-        if (b !== 0 && b !== rs - 1) {
-          return [(b - 1) * rs + 1, (b + 1) * rs + 1, b * rs + 2];
-        } else if (b === 0) {
-          return [(b + 1) * rs + 1, b * rs + 2];
+        return [(rowNullPos - 1) * squareSize, rowNullPos * squareSize - 1];
+      } else if (indexOfRowNullPos === (indexOfRowNullPos ^ 0)) {
+        if (indexOfRowNullPos !== 0 && indexOfRowNullPos !== squareSize - 1) {
+          return [(indexOfRowNullPos - 1) * squareSize + 1, (indexOfRowNullPos + 1) * squareSize + 1, indexOfRowNullPos * squareSize + 2];
+        } else if (indexOfRowNullPos === 0) {
+          return [(indexOfRowNullPos + 1) * squareSize + 1, indexOfRowNullPos * squareSize + 2];
         }
-        return [(b - 1) * rs + 1, b * rs + 2];
-      } else if (c === 0) {
-        return [np - 1, np + 1, np + rs];
-      } else if (c === rs - 1) {
-        return [c * rs + d - 1, c * rs + d + 1, (c - 1) * rs + d];
+        return [(indexOfRowNullPos - 1) * squareSize + 1, indexOfRowNullPos * squareSize + 2];
+      } else if (intRowNullPos === 0) {
+        return [nullPos - 1, nullPos + 1, nullPos + squareSize];
+      } else if (intRowNullPos === squareSize - 1) {
+        return [intRowNullPos * squareSize + posOffset - 1, intRowNullPos * squareSize + posOffset + 1, (intRowNullPos - 1) * squareSize + d];
       }
       return [];
     },

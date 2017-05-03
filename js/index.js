@@ -3,9 +3,16 @@ const MVP = (function () {
     showWinMes() {
       document.querySelector('#massage-box span').innerText = 'You`re WIN!';
     },
+    showPlayerList(aPlayersList) {
+      let sPlayersList = "";
+      aPlayersList.forEach( (el) => sPlayersList = sPlayersList + '<div>' + el + '</div>');
+      document.querySelector('#players-box').innerHTML = sPlayersList;
+    },
   };
 
   const model = {
+    iCounter: 0,
+    sPlayerName: "",
     aCurrentGameModel: [],
     createWinCombination(iSize) {
       const iRowCount = Math.pow(iSize, 2);
@@ -15,6 +22,25 @@ const MVP = (function () {
         aWinCombination.push(i + 1);
       }
       return aWinCombination;
+    },
+    setDataToStorage(sPlayerName, count) {
+      const key = 'barleyBreakPlayers';
+      let playersData = JSON.parse(localStorage.getItem(key));
+      if (!playersData) {
+        playersData = {}
+      }
+      playersData[sPlayerName] = count;
+      localStorage.setItem(key, JSON.stringify(playersData));
+      return true;
+    },
+    getPlayersList() {
+      let aPlayersList = [];
+      const key = 'barleyBreakPlayers';
+      const oPlayersList = JSON.parse(localStorage.getItem(key));
+      for ( let playerName in oPlayersList) {
+        aPlayersList.push(`${playerName} ${oPlayersList[playerName]}`);
+      }
+      return aPlayersList;
     },
     setNullPosition(aStartingCombination, iNullPos) {
       this.iNullPos = aStartingCombination !== null ? aStartingCombination.indexOf(null) : iNullPos;
@@ -28,7 +54,7 @@ const MVP = (function () {
     getDraggableElements() {
         /*
           return i+1
-          model for building of the algoritm:
+          model for building of the algorithm:
           size = x^2
           0*x+1 0*x+2 ... 1*x
           1*x+1 1*x+2 ... 2*x
@@ -100,9 +126,15 @@ const MVP = (function () {
         aStartingCombination = model.createStartingCombination(that.iSize);
         that.createField(aStartingCombination);
       } else {
+        model.iCounter = 0;
         aStartingCombination = model.createStartingCombination(that.iSize);
         that.createField(aStartingCombination);
       }
+    },
+    setFieldRange() {
+      const that = this;
+      const fieldForSize = document.getElementById('field-size');
+      fieldForSize.innerText = that.iSize;
     },
     setFieldRange() {
       const that = this;
@@ -155,6 +187,7 @@ const MVP = (function () {
     },
     cellClick(el) {
       const that = this;
+      const playerNameInput = document.getElementById('playerName').value;
       const aDrugguble = model.getDraggableElements();
       const aCurrentGameModel = model.getCurrentGameModel();
       const iCurrentNullPos = model.getNullPos();
@@ -162,18 +195,23 @@ const MVP = (function () {
       const iTargetIndex = aCurrentGameModel.indexOf(iTargetValue);
       const iDraggable = aDrugguble.indexOf(iTargetIndex + 1);
       let bWin;
-      if (iDraggable !== -1) {
+      if (iDraggable !== -1 && that.bGameStart) {
         aCurrentGameModel.splice(iCurrentNullPos, 1, iTargetValue);
         aCurrentGameModel.splice(iTargetIndex, 1, null);
         model.setNullPosition(null, iTargetIndex);
         that.renderField(aCurrentGameModel);
         bWin = model.checkWin(aCurrentGameModel);
+        model.iCounter++;
         if (bWin) {
+          playerNameInput ? model.setDataToStorage(playerNameInput, model.iCounter) : 0;
           view.showWinMes();
+          view.showPlayerList(model.getPlayersList());
+          that.bGameStart = false;
         }
       }
     },
   };
+
   return presenter;
 }());
 

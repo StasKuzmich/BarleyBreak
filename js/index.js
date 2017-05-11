@@ -89,7 +89,7 @@ const MVP = (function () {
       } else if (intRowNullPos === 0) {
         return [nullPos - 1, nullPos + 1, nullPos + squareSize];
       } else if (intRowNullPos === squareSize - 1) {
-        return [intRowNullPos * squareSize + posOffset - 1, intRowNullPos * squareSize + posOffset + 1, (intRowNullPos - 1) * squareSize + d];
+        return [intRowNullPos * squareSize + posOffset - 1, intRowNullPos * squareSize + posOffset + 1, (intRowNullPos - 1) * squareSize + posOffset];
       }
       return [];
     },
